@@ -28,12 +28,12 @@ pipeline {
 	            }
          stage ('Creat War File') {
 	            steps {
-	                sh 'java -jar target/dependency/webapp-runner.jar target/jatin.war'
+	                sh 'java -jar target/dependency/webapp-runner.jar target/*.war'
 	                }
 	            }
 	            stage ('Deploy War File') {
 	            steps {
-	                sh "cp target/jatin.war /etc/apache-tomcat-8.5.61/webapps/"
+	                sh "cp target/*.war /etc/apache-tomcat-8.5.61/webapps/"
 	                }
 	            }
         }
