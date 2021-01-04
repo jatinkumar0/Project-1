@@ -1,35 +1,23 @@
 pipeline {
-agent any
-
-stages{
- 
-stage('BUILD')
-{
-steps{
- echo "Hello everyone"
-}
-}
-
-stage('Deploy'){
-steps{
-echo "Deploying"
-}
-}
-
- stage('MKDIR')
- {
-  steps{
-  sh "pwd"  
-  sh "touch new_P"
-   
-  
-  }
- }
- 
- 
- 
- 
- 
-}
-
-}
+    agent any
+    tools {
+        maven 'maven'
+        }
+    stages {
+        stage ('Compile') {
+            steps {
+                sh 'mvn install'
+                }
+            }     
+        stage ('Package') {
+            steps {
+                sh 'mvn package'
+                }
+            }
+        stage ('Install') {
+            steps {
+                sh 'mvn install'
+                }
+            }
+        }
+    }
