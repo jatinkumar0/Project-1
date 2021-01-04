@@ -19,7 +19,7 @@ echo "Deploying"
  stage('MKDIR')
  {
   steps{
-  sh "mkdir /ec2-user@ip-172-31-0-46/home/ec2-user/xyz.conf"  
+  sh "mkdir /ec2-user@ip-172-31-0-46/xyz.conf"  
   
   }
  }
