@@ -26,14 +26,9 @@ pipeline {
 	                url: 'https://github.com/jatinkumar0/Project-1.git'
 	                }
 	            }
-         stage ('Creat War File') {
-	            steps {
-	                sh 'java -jar target/dependency/webapp-runner.jar target/*root.war'
-	                }
-	            }
 	            stage ('Deploy War File') {
 	            steps {
-	                sh "cp target/*root.war /etc/apache-tomcat-8.5.61/webapps/"
+	                sh "cp sample.war /etc/apache-tomcat-8.5.61/webapps/"
 	                }
 	            }
         }
