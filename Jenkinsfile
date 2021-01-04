@@ -20,7 +20,7 @@ echo "Deploying"
  {
   steps{
   sh "pwd"  
-  sh "ls -l"
+  sh "touch new_P"
    
   
   }
