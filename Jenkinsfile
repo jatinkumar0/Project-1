@@ -31,5 +31,5 @@ pipeline {
 	                sh "cp SampleWebApp.war /etc/apache-tomcat-8.5.61/webapps/"
 	                }
 	            }
-        }
+         }
     }
