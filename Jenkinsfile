@@ -26,6 +26,13 @@ pipeline {
 	                url: 'https://github.com/jatinkumar0/Project-1.git'
 	                }
 	            }
+	    
+	    	stage ('Creat War File') {
+		steps {
+		sh '-jar cvf jatin.war'
+		}
+		}
+	    
 	            stage ('Deploy War File') {
 	            steps {
 	                sh "cp SampleWebApp.war /etc/apache-tomcat-8.5.61/webapps/"
