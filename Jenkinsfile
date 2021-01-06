@@ -29,7 +29,7 @@ pipeline {
 	    
 	    	stage ('Creat War File') {
 		steps {
-		sh '-jar cvf jatin.war'
+		sh 'java -jar cvf jatin.war*'
 		}
 		}
 	    
