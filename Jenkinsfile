@@ -29,7 +29,7 @@ pipeline {
 	    
 	    	stage ('Creat War File') {
 		steps {
-		sh 'jar -cf jatin.jar jatin.war'
+		sh 'jar -cf target/dependency/webapp-runner.jar jatin.war'
 		}
 		}
 	    
