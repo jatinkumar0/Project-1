@@ -23,7 +23,6 @@ aws ec2 attach-internet-gateway --internet-gateway-id $igw_id --vpc-id $vpcid
 #CREATING PEM FILE FOR LATER USE
 read -p "Enter a name for your .pem file (key file)" keyname
 aws ec2 create-key-pair --key-name $keyname --query 'KeyMaterial' --output text 
-#sudo chmod 600 $keyname
 #CREATING PUBLIC EC2 INSTANCE
 #creating security group for the instance
 aws ec2 create-security-group --group-name sg_pub_demo --description "security group of public instance" --vpc-id $vpcid
@@ -38,33 +37,29 @@ read -p "Enter Private subnet's ID" priv_sub_id
 aws ec2 run-instances --image-id ami-04b1ddd35fd71475a --count 1 --instance-type t2.micro --key-name $keyname --security-group-ids $sg_privid --subnet-id $priv_sub_id --no-associate-public-ip-address --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=JT_PRIV}]'
 aws ec2 create-security-group --group-name sg_nat_demo --description "NAT instance sg" --vpc-id $vpcid
 read -p "Enter nat instance's security group ID" sg_nat_id
-aws ec2 run-instances --image-id ami-00999044593c895de --count 1 --instance-type t2.micro --key-name $keyname --subnet-id $pub_sub_id --security-group-ids $sg_nat --associate-public-ip-address --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=JT_NAT}]'
+aws ec2 run-instances --image-id ami-00999044593c895de --count 1 --instance-type t2.micro --key-name $keyname --subnet-id $pub_sub_id --security-group-ids $sg_nat_id --associate-public-ip-address --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=JT_NAT}]'
 read -p "enter the instance id of nat instance " nat_id
 aws ec2 modify-instance-attribute --instance-id $nat_id --no-source-dest-check
 #CONFIGURING  SECURITY GROUPS AND ADDING INBOUND RULES TO SG
 aws ec2 authorize-security-group-ingress --group-id $sg_nat_id --protocol tcp --port 80 --cidr $cidr_priv_sub
-aws ec2 authorize-security-group-ingress --group-id $sg_nat_id --protocol tcp --port 80 --cidr $cidr_priv_sub
 aws ec2 authorize-security-group-ingress --group-id $sg_nat_id --protocol tcp --port 443 --cidr $cidr_priv_sub
 aws ec2 authorize-security-group-ingress --group-id $sg_nat_id --protocol icmp --port -1 --cidr $cidr_priv_sub
-aws ec2 authorize-security-group-ingress --group-id $sg_nat_id --protocol icmp --port -1 --cidr $cidr_priv_sub
 #read -p "Enter your public instance security group key name: " public_sg_key_name
-read -p "Enter your public instance security group Name: " public_sg_key_value
-aws ec2 create-security-group --group-name $public_sg_name --description "public security group" --vpc-id $vpcid --tag-specifications 'ResourceType=security-group,Tags=[{Key=Name,Value='$public_sg_key_value'}]' --query GroupId --output text
+read -p "Enter your public instance security group Name: " public_sg_name
+aws ec2 create-security-group --group-name $public_sg_name --description "public security group" --vpc-id $vpcid --tag-specifications 'ResourceType=security-group,Tags=[{Key=Name,Value='$public_sg_name'}]' --query GroupId --output text
 aws ec2 authorize-security-group-ingress --group-id $sg_pubid --protocol tcp --port 80 --cidr 0.0.0.0/0
 aws ec2 authorize-security-group-ingress --group-id $sg_pubid --protocol tcp --port 22 --cidr 0.0.0.0/0
 aws ec2 authorize-security-group-ingress --group-id $sg_pubid --protocol tcp --port 443 --cidr 0.0.0.0/0
-aws ec2 authorize-security-group-ingress --group-id $sg_pubid --protocol tcp --port 22 --cidr 13.233.177.0/29
+#aws ec2 authorize-security-group-ingress --group-id $sg_pubid --protocol tcp --port 22 --cidr 13.233.177.0/29
 #aws ec2 authorize-security-group-ingress --group-id $public_sg_id --protocol tcp --port 22 --cidr 13.233.177.0/29
-read -p "Enter your private instance security group key name: " private_sg_key_name
-read -p "Enter your private instance security group key name: " private_sg_key_name
-aws ec2 create-security-group --group-name $private_sg_name --description "private security group" --vpc-id $vpc_id --tag-specifications 'ResourceType=security-group,Tags=[{Key='$private_sg_key_name',Value='$private_sg_key_value'}]' --query GroupId --output text
+read -p "Enter your private instance security group name: " private_sg_name
+aws ec2 create-security-group --group-name $private_sg_name --description "private security group" --vpc-id $vpcid --tag-specifications 'ResourceType=security-group,Tags=[{Key=Name,Value='$private_sg_name'}]' --query GroupId --output text
 aws ec2 authorize-security-group-ingress --group-id $sg_privid --protocol tcp --port 80 --cidr 0.0.0.0/0
 aws ec2 authorize-security-group-ingress --group-id $sg_privid --protocol tcp --port 8080 --source-group $public_sg_id
 aws ec2 authorize-security-group-ingress --group-id $sg_privid --protocol all --port all --source-group $nat_sg_id
 aws ec2 authorize-security-group-ingress --group-id $sg_privid --protocol tcp --port 22 --cidr 0.0.0.0/0
-aws ec2 authorize-security-group-ingress --group-id $sg_privid --protocol tcp --port 22 --cidr 13.233.177.0/29
-aws ec2 authorize-security-group-ingress --group-id $sg_privid --protocol tcp --port 22 --cidr 13.233.177.0/29
-aws ec2 authorize-security-group-ingress --group-id $sg_privid --protocol tcp --port 443 --cidr 0.0.0.0/0
+#aws ec2 authorize-security-group-ingress --group-id $sg_privid --protocol tcp --port 22 --cidr 13.233.177.0/29
+#aws ec2 authorize-security-group-ingress --group-id $sg_privid --protocol tcp --port 443 --cidr 0.0.0.0/0
 #CONFIGURING PUBLIC ROUTE TABLE
 read -p "enter the public route table id " publicrt
 aws ec2 create-route --route-table-id $publicrt --destination-cidr-block 0.0.0.0/0 --gateway-id $igw_id
