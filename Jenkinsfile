@@ -33,7 +33,7 @@ pipeline {
 	    
 	            stage ('Deploy War File') {
 	            steps {
-	                sh "cp target/*.war /etc/apache-tomcat-8.5.61/webapps/"
+	                sh "cp target/*.war /etc/apache-tomcat-8.5.64/webapps/"
 	                }
 	            }
          }
